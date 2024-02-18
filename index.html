@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-5WSC9PQ0K8"></script> -->
+    <!-- <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-5WSC9PQ0K8');
+    </script> -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css" rel="stylesheet">
+    <title>WOLONet</title>
+  </head>
+
+  <style type="text/css">
+    a {
+	text-decoration: none !important;
+	color: #0072B5
+    }
+    a:hover {
+	color: #D2386C
+    }
+    h3 {
+	padding-top: 20px;
+    }
+    h4 {
+	padding-top: 20px;
+    }
+    table {
+	width: 100%;
+	table-layout: fixed;
+    }
+    th {
+	text-align: center;
+	vertical-align: middle;
+    }
+    td {
+	text-align: center;
+	vertical-align: middle;
+    }
+    ol.reference li {
+	list-style-type: none;
+	counter-increment: cnt;
+	text-indent:-1.6em;
+    }
+    ol.reference li::before {
+	display: marker;
+	content: "[" counter(cnt) "]";
+    }
+    audio {
+	width: 100%;
+	height: 24px;
+	vertical-align: middle;
+    }
+    .left {
+	text-align: left;
+    }
+    .pink{
+	color: #D2386C
+    }
+  </style>
+
+  <body>
+    <header>
+      <div class="text-center p-4">
+	<p class="lead">
+	<h2>T2M-HiFiGPT: Generating High-Quality Human Motion from Textual Descriptions with Residual Discrete Representations</h2>
+	</p>
+	</p>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+
+	<div class="row" id="abstract">
+	  <div class="col-md-12">
+	    <h3>Abstract</h3>
+	    <div>
+	      <p>
+			 This study introduces T2M-HiFiGPT, a novel conditional generative framework for autoregressively synthesizing human motion from textual descriptions. This framework is underpinned by a Residual Vector Quantized Variational AutoEncoder (RVQ-VAE) and a double-tier Generative Pretrained Transformer (GPT) architecture. We demonstrate that our CNN-based RVQ-VAE is capable of producing highly accurate 2D temporal-residual discrete motion representations. Our proposed double-tier GPT structure comprises a temporal GPT and a residual GPT. The temporal GPT efficiently condenses information from previous frames and textual descriptions into a 1D context vector. This vector then serves as a context prompt for the residual GPT, which generates the final residual discrete indices. These indices are subsequently transformed back into motion data by the RVQ-VAE decoder. To mitigate the exposure bias issue, we employ straightforward code corruption techniques for RVQ and a conditional dropout strategy, resulting in enhanced synthesis performance. Remarkably, T2M-HiFiGPT not only simplifies the generative process but also surpasses existing methods in both performance and parameter efficacy, including the latest diffusion-based and GPT-based models. On the HumanML3D<a href="#1"><small>[1]</small></a> dataset, our framework achieves exceptional results across nearly all primary metrics. We further validate the efficacy of our framework through comprehensive ablation studies on the HumanML3D<a href="#1"><small>[1]</small></a>  dataset, examining the contribution of each component. Our findings reveal that RVQ-VAE is more adept at capturing precise 3D human motion with comparable computational demand compared to its VQ-VAE counterparts. As a result, T2M-HiFiGPT enables the generation of human motion with significantly increased accuracy, outperforming recent state-of-the-art approaches such as T2M-GPT<a href="#3"><small>[3]</small></a> or Att-T2M<a href="#4"><small>[4]</small></a>.
+	      </p>
+	    </div>
+	  </div>
+	</div>
+	
+	<div class="row" id="rvq-arch">
+		<div class="col-md-12">
+			<h3>Pipeline</h3>
+			<img src="pipeline.png" style="max-width: 100%;" />
+		</div>
+	</div>
+
+	<div class="row" id="results">
+	  <div class="col-md-12">
+	    <h3>Qualitative Comparison</h3>
+
+	    <h4> "a man has picked up an object while bending down and kneeling on his right side" </h4>
+
+		<video controls height="320">		  
+			<source src="compare/compare_sample_7_final.mp4" type="video/mp4" />
+		</video>
+
+	    <h4>"from a standing pose with both arms raised, the person twists from right to left and then from left to right"</h4>
+
+		<video controls height="320">		  
+			<source src="compare/compare_sample_15_final.mp4" type="video/mp4" />
+		</video>
+
+		<h4>"a person dancing like michael jackson"</h4>
+		<video controls height="320">		  
+			<source src="compare/compare_sample_19_final.mp4" type="video/mp4" />
+		</video>
+
+		<h4>"the stick figure is walking in form of a back wards letter j"</h4>
+		<video controls height="320">		  
+			<source src="compare/compare_sample_22_final.mp4" type="video/mp4" />
+		</video>
+
+
+		<h4>"person is doing an excercise with hands forward"</h4>
+		<video controls height="320">		  
+			<source src="compare/compare_sample_29_final.mp4" type="video/mp4" />
+		</video>
+
+		<h4>"a person steps backwards with their left foot and stretches"</h4>
+		<video controls height="320">		  
+			<source src="compare/compare_sample_32_final.mp4" type="video/mp4" />
+		</video>
+
+		<h4>"the person is walking slowly like a monster"</h4>
+		<video controls height="320">		  
+			<source src="compare/compare_sample_35_final.mp4" type="video/mp4" />
+		</video>
+
+		<h4>"this person moves as if stepping on a ladder and reaches with his left arm"</h4>
+		<video controls height="320">		  
+			<source src="compare/compare_sample_43_final.mp4" type="video/mp4" />
+		</video>
+
+		<h4>"the person steps forward and claps"</h4>
+		<video controls height="320">		  
+			<source src="compare/compare_sample_47_final.mp4" type="video/mp4" />
+		</video>
+
+		<h4>"a person who is warming up their arms and legs"</h4>
+		<video controls height="320">		  
+			<source src="compare/compare_sample_58_final.mp4" type="video/mp4" />
+		</video>
+		
+		<h4>"figure appears to be stretching or warming up"</h4>
+		<video controls height="320">		  
+			<source src="compare/compare_sample_62_final.mp4" type="video/mp4" />
+		</video>
+
+		<h4>"person stand in t position, interlocks hands, then returns to t"</h4>
+		<video controls height="320">		  
+			<source src="compare/compare_sample_65_final.mp4" type="video/mp4" />
+		</video>
+
+		<h4>"a person walks in a clockwise circle"</h4>
+		<video controls height="320">		  
+			<source src="compare/compare_sample_66_final.mp4" type="video/mp4" />
+		</video>
+
+		<h4>"a person has hands by his hips and walks to the left"</h4>
+		<video controls height="320">		  
+			<source src="compare/compare_sample_68_final.mp4" type="video/mp4" />
+		</video>
+
+		<h4>"a person walks while swinging his arms"</h4>
+		<video controls height="320">		  
+			<source src="compare/compare_sample_75_final.mp4" type="video/mp4" />
+		</video>
+
+		<h4>"a person is performing dance moves"</h4>
+		<video controls height="320">		  
+			<source src="compare/compare_sample_80_final.mp4" type="video/mp4" />
+		</video>
+
+	  </div>
+	</div>
+
+
+	<div class="row" id="results">
+		<div class="col-md-12">
+		  <h3>More Results</h3>
+		  <h4> "a person walks away diagonally to his right, picks something up, walks back, and then he again walks diagonally to his right and picks something up." </h4>
+		  <video controls height="320">		  
+			  <source src="more_vis/sample_6.mp4" type="video/mp4" />
+		  </video>
+
+		  <h4> "figure gets down on hands and knees facing left and crawls 3 steps before turning around and crawling to the  right for  4 steps, backs up slightly and stands back up facing forward." </h4>
+		  <video controls height="320">		  
+			  <source src="more_vis/sample_15.mp4" type="video/mp4" />
+		  </video>
+
+		  <h4> "a person who is standing with his hands at his sides, bends over, crosses his legs and sits down, then uses his arms to push himself up almost to a standing position." </h4>
+		  <video controls height="320">		  
+			  <source src="more_vis/sample_56.mp4" type="video/mp4" />
+		  </video>
+
+		  <h4> "a person with their hands on their chest and elbows out to the side flaps their elbows several time turned slightly to the right the wiggles to the left side and then wiggles to their right side and repeats the elbow flapping motion." </h4>
+		  <video controls height="320">		  
+			  <source src="more_vis/sample_58.mp4" type="video/mp4" />
+		  </video>
+
+		  <h4> "a person takes a step forward, pivots on their left foot and turns 180 degrees and walks back to where they started, but facing the opposite direction." </h4>
+		  <video controls height="320">		  
+			  <source src="more_vis/sample_94.mp4" type="video/mp4" />
+		  </video>
+
+
+		  <h4> "the toon is crouched down on one knee, stands up shuffles, raising both hands in front of them while walking to the end of the plane & turning around." </h4>
+		  <video controls height="320">		  
+			  <source src="more_vis/sample_145.mp4" type="video/mp4" />
+		  </video>
+
+		  <h4> "a person begins from a standing position, begins to run to their left, turns around almost immediately, runs several steps, turns back around, and returns to their starting position." </h4>
+		  <video controls height="320">		  
+			  <source src="more_vis/sample_148.mp4" type="video/mp4" />
+		  </video>
+
+		  <h4> "a person turns to the left, picks up an object and holds it near their head, places the object down and turns to the right." </h4>
+		  <video controls height="320">		  
+			  <source src="more_vis/sample_186.mp4" type="video/mp4" />
+		  </video>
+
+		  <h4> "a person keeps his hands up to the sides at head level, squats almost to the floor and rises, squats again until thighs are parallel to the floor and quickly rises, and squats almost to the floor and rises." </h4>
+		  <video controls height="320">		  
+			  <source src="more_vis/sample_189.mp4" type="video/mp4" />
+		  </video>
+
+		  <h4> "a person places both hands on the arms of a chair, scoots body forward, and then leans forward and stands up placing both feet together in the end." </h4>
+		  <video controls height="320">		  
+			  <source src="more_vis/sample_206.mp4" type="video/mp4" />
+		  </video>
+
+		</div>
+	  </div>
+  
+
+	<div class="row" id="rvq-arch">
+		<div class="col-md-12">
+		<h3>The Architecture Details of Motion RVQ-VAE</h3>
+		<ol class="rvq-arch">
+		<pre style="text-align:left">
+		(encoder): Encoder( 
+			(last_layer): Conv1d(512, 512, kernel_size=(3,), stride=(1,), padding=(1,)) 
+			(model): Sequential( 
+			  (0): Conv1d(263, 512, kernel_size=(3,), stride=(1,), padding=(1,)) 
+			  (1): ReLU() 
+			  (2): Sequential( 
+				(0): Conv1d(512, 512, kernel_size=(4,), stride=(2,), padding=(1,)) 
+				(1): Resnet1D( 
+				  (model): Sequential( 
+					(0): ResConv1DBlock( 
+					  (norm1): Identity() 
+					  (norm2): Identity() 
+					  (activation1): ReLU() 
+					  (activation2): ReLU() 
+					  (conv1): Conv1d(512, 512, kernel_size=(3,), stride=(1,), padding=(3,), dilation=(3,)) 
+					  (conv2): Conv1d(512, 512, kernel_size=(1,), stride=(1,)) 
+					) 
+					(1): ResConv1DBlock( 
+					  (norm1): Identity() 
+					  (norm2): Identity() 
+					  (activation1): ReLU() 
+					  (activation2): ReLU() 
+					  (conv1): Conv1d(512, 512, kernel_size=(3,), stride=(1,), padding=(1,)) 
+					  (conv2): Conv1d(512, 512, kernel_size=(1,), stride=(1,)) 
+					) 
+				  )
+				)
+			  )
+			  (3): Sequential(
+				(0): Conv1d(512, 512, kernel_size=(4,), stride=(2,), padding=(1,))
+				(1): Resnet1D(
+				  (model): Sequential(
+					(0): ResConv1DBlock(
+					  (norm1): Identity()
+					  (norm2): Identity()
+					  (activation1): ReLU()
+					  (activation2): ReLU()
+					  (conv1): Conv1d(512, 512, kernel_size=(3,), stride=(1,), padding=(3,), dilation=(3,))
+					  (conv2): Conv1d(512, 512, kernel_size=(1,), stride=(1,))
+					)
+					(1): ResConv1DBlock(
+					  (norm1): Identity()
+					  (norm2): Identity()
+					  (activation1): ReLU()
+					  (activation2): ReLU()
+					  (conv1): Conv1d(512, 512, kernel_size=(3,), stride=(1,), padding=(1,))
+					  (conv2): Conv1d(512, 512, kernel_size=(1,), stride=(1,))
+					)
+				  )
+				)
+			  )
+			  (4): Sequential(
+				(0): Conv1d(512, 512, kernel_size=(4,), stride=(2,), padding=(1,))
+				(1): Resnet1D(
+				  (model): Sequential(
+					(0): ResConv1DBlock(
+					  (norm1): Identity()
+					  (norm2): Identity()
+					  (activation1): ReLU()
+					  (activation2): ReLU()
+					  (conv1): Conv1d(512, 512, kernel_size=(3,), stride=(1,), padding=(3,), dilation=(3,))
+					  (conv2): Conv1d(512, 512, kernel_size=(1,), stride=(1,))
+					)
+					(1): ResConv1DBlock(
+					  (norm1): Identity()
+					  (norm2): Identity()
+					  (activation1): ReLU()
+					  (activation2): ReLU()
+					  (conv1): Conv1d(512, 512, kernel_size=(3,), stride=(1,), padding=(1,))
+					  (conv2): Conv1d(512, 512, kernel_size=(1,), stride=(1,))
+					)
+				  )
+				)
+			  )
+			  (5): Conv1d(512, 512, kernel_size=(3,), stride=(1,), padding=(1,))
+			)
+		  )
+		  (decoder): Decoder(
+			(last_layer): Conv1d(512, 263, kernel_size=(3,), stride=(1,), padding=(1,))
+			(model): Sequential(
+			  (0): Conv1d(512, 512, kernel_size=(3,), stride=(1,), padding=(1,))
+			  (1): ReLU()
+			  (2): Sequential(
+				(0): Resnet1D(
+				  (model): Sequential(
+					(0): ResConv1DBlock(
+					  (norm1): Identity()
+					  (norm2): Identity()
+					  (activation1): ReLU()
+					  (activation2): ReLU()
+					  (conv1): Conv1d(512, 512, kernel_size=(3,), stride=(1,), padding=(3,), dilation=(3,))
+					  (conv2): Conv1d(512, 512, kernel_size=(1,), stride=(1,))
+					)
+					(1): ResConv1DBlock(
+					  (norm1): Identity()
+					  (norm2): Identity()
+					  (activation1): ReLU()
+					  (activation2): ReLU()
+					  (conv1): Conv1d(512, 512, kernel_size=(3,), stride=(1,), padding=(1,))
+					  (conv2): Conv1d(512, 512, kernel_size=(1,), stride=(1,))
+					)
+				  )
+				)
+				(1): Upsample(scale_factor=2.0, mode=nearest)
+				(2): Conv1d(512, 512, kernel_size=(3,), stride=(1,), padding=(1,))
+			  )
+			  (3): Sequential(
+				(0): Resnet1D(
+				  (model): Sequential(
+					(0): ResConv1DBlock(
+					  (norm1): Identity()
+					  (norm2): Identity()
+					  (activation1): ReLU()
+					  (activation2): ReLU()
+					  (conv1): Conv1d(512, 512, kernel_size=(3,), stride=(1,), padding=(3,), dilation=(3,))
+					  (conv2): Conv1d(512, 512, kernel_size=(1,), stride=(1,))
+					)
+					(1): ResConv1DBlock(
+					  (norm1): Identity()
+					  (norm2): Identity()
+					  (activation1): ReLU()
+					  (activation2): ReLU()
+					  (conv1): Conv1d(512, 512, kernel_size=(3,), stride=(1,), padding=(1,))
+					  (conv2): Conv1d(512, 512, kernel_size=(1,), stride=(1,))
+					)
+				  )
+				)
+				(1): Upsample(scale_factor=2.0, mode=nearest)
+				(2): Conv1d(512, 512, kernel_size=(3,), stride=(1,), padding=(1,))
+			  )
+			  (4): Sequential(
+				(0): Resnet1D(
+				  (model): Sequential(
+					(0): ResConv1DBlock(
+					  (norm1): Identity()
+					  (norm2): Identity()
+					  (activation1): ReLU()
+					  (activation2): ReLU()
+					  (conv1): Conv1d(512, 512, kernel_size=(3,), stride=(1,), padding=(3,), dilation=(3,))
+					  (conv2): Conv1d(512, 512, kernel_size=(1,), stride=(1,))
+					)
+					(1): ResConv1DBlock(
+					  (norm1): Identity()
+					  (norm2): Identity()
+					  (activation1): ReLU()
+					  (activation2): ReLU()
+					  (conv1): Conv1d(512, 512, kernel_size=(3,), stride=(1,), padding=(1,))
+					  (conv2): Conv1d(512, 512, kernel_size=(1,), stride=(1,))
+					)
+				  )
+				)
+				(1): Upsample(scale_factor=2.0, mode=nearest)
+				(2): Conv1d(512, 512, kernel_size=(3,), stride=(1,), padding=(1,))
+			  )
+			  (5): Conv1d(512, 512, kernel_size=(3,), stride=(1,), padding=(1,))
+			  (6): ReLU()
+			  (7): Conv1d(512, 263, kernel_size=(3,), stride=(1,), padding=(1,))
+			)
+		  )
+		  (quantizer): RQBottleneck(
+			(codebooks): ModuleList(
+			  (0): VQEmbedding(257, 512, padding_idx=256)
+			  (1): VQEmbedding(257, 512, padding_idx=256)
+			  (2): VQEmbedding(257, 512, padding_idx=256)
+			  (3): VQEmbedding(257, 512, padding_idx=256)
+			  (4): VQEmbedding(257, 512, padding_idx=256)
+			  (5): VQEmbedding(257, 512, padding_idx=256)
+			  (6): VQEmbedding(257, 512, padding_idx=256)
+			  (7): VQEmbedding(257, 512, padding_idx=256)
+			  (8): VQEmbedding(257, 512, padding_idx=256)
+			  (9): VQEmbedding(257, 512, padding_idx=256)
+			)
+		  )
+		  (quant_conv): Conv1d(512, 512, kernel_size=(1,), stride=(1,))
+		  (post_quant_conv): Conv1d(512, 512, kernel_size=(1,), stride=(1,))
+		</pre>
+	    </ol>
+	  </div>
+	</div>
+
+	<div class="row" id="references">
+	  <div class="col-md-12">
+	    <h3>Reference</h3>
+	    <ol class="reference">
+	      <li><a name="1"></a>
+			Chuan Guo, Shihao Zou, Xinxin Zuo, Sen Wang, Wei Ji, Xingyu Li, and Li Cheng. Generating diverse and natural 3d human motions from text. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition,pages 5152–5161, 2022
+	      </li>
+	      
+	      <li><a name="2"></a>
+			Matthias Plappert, Christian Mandery, and Tamim Asfour. The kit motion-language dataset. Big data, 4(4):236–252,2016
+	      </li>
+
+	      <li><a name="3"></a>
+			ianrong Zhang, Yangsong Zhang, Xiaodong Cun, Yong Zhang, Hongwei Zhao, Hongtao Lu, Xi Shen, and Ying Shan. Generating human motion from textual descriptions with discrete representations. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, pages 14730–14740, 2023
+	      </li>
+	      
+	      <li><a name="4"></a>
+			chongyang Zhong, Lei Hu, Zihao Zhang, and Shihong Xia. Attt2m: Text-driven human motion generation with multi-perspective attention mechanism. In Proceedings of the IEEE/CVF International Conference on Computer Vision,pages 509–519, 2023
+	      </li>
+
+	      <li><a name="5"></a>
+			Mingyuan Zhang, Huirong Li, Zhongang Cai, Jiawei Ren,Lei Yang, and Ziwei Liu. Finemogen: Fine-grained spatio-temporal motion generation and editing. NeurIPS, 2023
+	      </li>
+	    </ol>
+	  </div>
+	</div>
+	
+      </div>
+    </main>
+
+    <footer>
+      <div class="text-center p-3">
+	<a class="btn btn-outline-secondary" href="#top" role="button">Back to top</a>
+      </div>
+    </footer>
+
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
+    <!-- <script src="../../js/bootstrap.min.js"></script> -->
+  </body>
+</html>
